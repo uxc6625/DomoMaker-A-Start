@@ -1,4 +1,4 @@
-// import
+// import libraries
 const path = require('path');
 const express = require('express');
 const compression = require('compression');
@@ -8,16 +8,16 @@ const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 const expressHandlebars = require('express-handlebars');
 const session = require('express-session');
-
 const RedisStore = require('connect-redis')(session);
 const url = require('url');
 const csrf = require('csurf');
+
 
 const port = process.env.PORT || process.env.NODE_PORT || 3000;
 
 const dbURL = process.env.MONGODB_URI || 'mongodb://localhost/DomoMaker';
 
-mongoose.connect(dbURL, (err) => {
+mongoose.connect(dbURL, { useMongoClient: true }, (err) => {
   if (err) {
     console.log('Could not connect to database');
     throw err;
@@ -36,11 +36,13 @@ if (process.env.REDISCLOUD_URL) {
   redisPASS = redisURL.auth.split(':')[1];
 }
 
+// pull in our routes
 const router = require('./router.js');
 
 const app = express();
 app.use('/assets', express.static(path.resolve(`${__dirname}/../hosted/`)));
 app.use(favicon(`${__dirname}/../hosted/img/favicon.png`));
+app.disable('x-powered-by');
 app.use(compression());
 app.use(bodyParser.urlencoded({
   extended: true,
@@ -62,11 +64,11 @@ app.use(session({
 app.engine('handlebars', expressHandlebars({ defaultLayout: 'main' }));
 app.set('view engine', 'handlebars');
 app.set('views', `${__dirname}/../views`);
-app.disable('x-powered-by');
 app.use(cookieParser());
 
-// csrf comes after app.use(cookieParser()); and app.use(session({...}))
-// csrf comes before router
+// csrf must come AFTER app.use(cookieParser());
+// and app.use(session({ ....... });
+// should come BEFORE the router
 app.use(csrf());
 app.use((err, req, res, next) => {
   if (err.code !== 'EBADCSRFTOKEN') return next(err);

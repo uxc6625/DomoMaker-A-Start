@@ -6,7 +6,7 @@ var handleLogin = function handleLogin(e) {
   $("#domoMessage").animate({ width: 'hide' }, 350);
 
   if ($("#user").val() == '' || $("#pass").val() == '') {
-    handleError("RAWR! Username or password is empty");
+    handleError("RAWR: Username or password is empty");
     return false;
   }
 
@@ -19,16 +19,15 @@ var handleLogin = function handleLogin(e) {
 
 var handleSignup = function handleSignup(e) {
   e.preventDefault();
-
   $("#domoMessage").animate({ width: 'hide' }, 350);
 
-  if ($("#user").val() == '' || $("#pass").val() == '' || $("#pass2").val() == '') {
-    handleError("RAWR! All fields are required");
+  if ($("#user").val() == '' || $("#pass").val() == '' || $("pass2").val() == '') {
+    handleError("RAWR: All fields are required");
     return false;
   }
 
   if ($("#pass").val() !== $("#pass2").val()) {
-    handleError("RAWR! Passwords do not match");
+    handleError("RAWR: Passwords do not match");
     return false;
   }
 
@@ -40,8 +39,7 @@ var handleSignup = function handleSignup(e) {
 var LoginWindow = function LoginWindow(props) {
   return React.createElement(
     "form",
-    { id: "loginForm",
-      name: "loginForm",
+    { id: "loginForm", name: "loginForm",
       onSubmit: handleLogin,
       action: "/login",
       method: "POST",
@@ -60,7 +58,7 @@ var LoginWindow = function LoginWindow(props) {
     ),
     React.createElement("input", { id: "pass", type: "password", name: "pass", placeholder: "password" }),
     React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-    React.createElement("input", { className: "formSubmit", type: "submit", value: "Sign In" })
+    React.createElement("input", { className: "formSubmit", type: "submit", value: "Sign in" })
   );
 };
 
@@ -121,7 +119,7 @@ var setup = function setup(csrf) {
     return false;
   });
 
-  createLoginWindow(csrf);
+  createLoginWindow(csrf); //default view
 };
 
 var getToken = function getToken() {
@@ -136,26 +134,26 @@ $(document).ready(function () {
 "use strict";
 
 var handleError = function handleError(message) {
-  $("#errorMessage").text(message);
-  $("#domoMessage").animate({ width: 'toggle' }, 350);
+		$("#errorMessage").text(message);
+		$("#domoMessage").animate({ width: 'toggle' }, 350);
 };
 
 var redirect = function redirect(response) {
-  $("#domoMessage").animate({ width: 'hide' }, 350);
-  window.location = response.redirect;
+		$("#domoMessage").animate({ width: 'hide' }, 350);
+		window.location = response.redirect;
 };
 
 var sendAjax = function sendAjax(type, action, data, success) {
-  $.ajax({
-    cache: false,
-    type: type,
-    url: action,
-    data: data,
-    dataType: "json",
-    success: success,
-    error: function error(xhr, status, _error) {
-      var messageObj = JSON.parse(xhr.responseText);
-      handleError(messageObj.error);
-    }
-  });
+		$.ajax({
+				cashe: false,
+				type: type,
+				url: action,
+				data: data,
+				dataType: "json",
+				success: success,
+				error: function error(xhr, status, _error) {
+						var messageObj = JSON.parse(xhr.responseText);
+						handleError(messageObj.error);
+				}
+		});
 };

@@ -1,14 +1,85 @@
 "use strict";
 
+var handlePassword = function handlePassword(e) {
+  e.preventDefault();
+  $("#domoMessage").animate({ width: 'hide' }, 350);
+
+  if ($("#oldPass").val() == '' || $("#pass").val() == '' || $("pass2").val() == '') {
+    handleError("RAWR: All fields are required");
+    return false;
+  }
+
+  if ($("#pass").val() !== $("#pass2").val()) {
+    handleError("RAWR: Passwords do not match");
+    return false;
+  }
+
+  sendAjax('POST', $("#passwordForm").attr("action"), $("#passwordForm").serialize(), redirect);
+
+  return false;
+};
+
+var PasswordWindow = function PasswordWindow(props) {
+  return React.createElement(
+    "form",
+    { id: "passwordForm",
+      name: "passwordForm",
+      onSubmit: handlePassword,
+      action: "/passwordChange",
+      method: "POST",
+      className: "mainForm"
+    },
+    React.createElement(
+      "label",
+      { htmlFor: "oldPass" },
+      "Old Password: "
+    ),
+    React.createElement("input", { id: "oldPass", type: "password", name: "oldPass", placeholder: "old passwold" }),
+    React.createElement(
+      "label",
+      { htmlFor: "pass" },
+      "Password: "
+    ),
+    React.createElement("input", { id: "pass", type: "password", name: "pass", placeholder: "password" }),
+    React.createElement(
+      "label",
+      { htmlFor: "pass2" },
+      "Password: "
+    ),
+    React.createElement("input", { id: "pass2", type: "password", name: "pass2", placeholder: "retype password" }),
+    React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
+    React.createElement("input", { className: "formSubmit", type: "submit", value: "Submit" })
+  );
+};
+
+var createPasswordWindow = function createPasswordWindow(csrf) {
+
+  ReactDOM.render(React.createElement("div", null), document.querySelector("#makeDomo"));
+
+  ReactDOM.render(React.createElement("div", null), document.querySelector("#domos"));
+
+  ReactDOM.render(React.createElement(PasswordWindow, { csrf: csrf }), document.querySelector("#content"));
+};
+
+var createDomoWindow = function createDomoWindow(csrf) {
+  ReactDOM.render(React.createElement("div", null), document.querySelector("#content"));
+
+  ReactDOM.render(React.createElement(DomoForm, { csrf: csrf }), document.querySelector("#makeDomo"));
+
+  ReactDOM.render(React.createElement(DomoForm, { domos: [] }), document.querySelector("#domos"));
+
+  loadDomosFromServer();
+};
+
 var handleDomo = function handleDomo(e) {
   e.preventDefault();
 
   $("#domoMessage").animate({ width: 'hide' }, 350);
 
-  if ($("#domoName").val() == '' || $("#domoAge").val() == '' || $("#domoCredit").val() == '') {
+  if ($("#domoName").val() == '' || $("#domoAge").val() == '' || $("#domoLevel").val() == '') {
     handleError("RAWR! All fields are required");
     return false;
-  }
+  };
 
   sendAjax('POST', $("#domoForm").attr("action"), $("#domoForm").serialize(), function () {
     loadDomosFromServer();
@@ -17,164 +88,36 @@ var handleDomo = function handleDomo(e) {
   return false;
 };
 
-var handleDomoUpdate = function handleDomoUpdate(e) {
-  e.preventDefault();
-
-  $("#domoMessage").animate({ width: 'hide' }, 350);
-
-  if ($("#domoNameUpdate").val() == '' || $("#domoAgeUpdate").val() == '' || $("#domoCreditUpdate").val() == '') {
-    handleError("RAWR! All fields are required");
-    return false;
-  }
-  handleError("RAWR! Not working yet...");
-  /*
-  sendAjax('POST', $("#domoUpdateForm").attr("action"), $("#domoUpdateForm").serialize(), function() {
-    loadDomosFromServer();
-  });
-  */
-  return false;
-};
-
 var DomoForm = function DomoForm(props) {
   return React.createElement(
-    "div",
-    { id: "forms" },
+    "form",
+    { id: "domoForm",
+      onSubmit: handleDomo,
+      name: "domoForm",
+      action: "/maker",
+      method: "POST",
+      className: "domoForm"
+    },
     React.createElement(
-      "h2",
-      { className: "formHead" },
-      "Create Domo"
+      "label",
+      { htmlFor: "name" },
+      "Name: "
     ),
+    React.createElement("input", { id: "domoName", type: "text", name: "name", placeholder: "Domo Name" }),
     React.createElement(
-      "form",
-      { id: "domoForm",
-        onSubmit: handleDomo,
-        name: "domoForm",
-        action: "/maker",
-        method: "POST",
-        className: "domoForm"
-      },
-      React.createElement(
-        "label",
-        { htmlFor: "name" },
-        "Name: "
-      ),
-      React.createElement("input", { id: "domoName", type: "text", name: "name", placeholder: "Domo Name" }),
-      React.createElement(
-        "label",
-        { htmlFor: "age" },
-        "Age: "
-      ),
-      React.createElement("input", { id: "domoAge", type: "text", name: "age", placeholder: "Domo Age" }),
-      React.createElement(
-        "label",
-        { htmlFor: "credit" },
-        "Credit: "
-      ),
-      React.createElement(
-        "select",
-        { id: "domoCredit", name: "credit" },
-        React.createElement(
-          "option",
-          { value: "1" },
-          "$1"
-        ),
-        React.createElement(
-          "option",
-          { value: "5" },
-          "$5"
-        ),
-        React.createElement(
-          "option",
-          { value: "10" },
-          "$10"
-        ),
-        React.createElement(
-          "option",
-          { value: "20" },
-          "$20"
-        ),
-        React.createElement(
-          "option",
-          { value: "50" },
-          "$50"
-        ),
-        React.createElement(
-          "option",
-          { value: "100" },
-          "$100"
-        )
-      ),
-      React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-      React.createElement("input", { className: "makeDomoSubmit", type: "submit", value: "Make Domo" })
+      "label",
+      { htmlFor: "age" },
+      "Age: "
     ),
+    React.createElement("input", { id: "domoAge", type: "text", name: "age", placeholder: "Domo Age" }),
     React.createElement(
-      "h2",
-      { className: "formHead" },
-      "Update Domo"
+      "label",
+      { htmlFor: "level" },
+      "Level: "
     ),
-    React.createElement(
-      "form",
-      { id: "domoUpdateForm",
-        onSubmit: handleDomoUpdate,
-        name: "domoUpdateForm"
-        //action="/updateDomo"
-        //method="POST"
-        , className: "domoForm"
-      },
-      React.createElement(
-        "label",
-        { htmlFor: "name" },
-        "Name: "
-      ),
-      React.createElement("input", { id: "domoNameUpdate", type: "text", name: "name", placeholder: "Domo Name" }),
-      React.createElement(
-        "label",
-        { htmlFor: "age" },
-        "Age: "
-      ),
-      React.createElement("input", { id: "domoAgeUpdate", type: "text", name: "age", placeholder: "New Domo Age" }),
-      React.createElement(
-        "label",
-        { htmlFor: "credit" },
-        "Credit: "
-      ),
-      React.createElement(
-        "select",
-        { id: "domoCreditUpdate", name: "credit" },
-        React.createElement(
-          "option",
-          { value: "1" },
-          "$1"
-        ),
-        React.createElement(
-          "option",
-          { value: "5" },
-          "$5"
-        ),
-        React.createElement(
-          "option",
-          { value: "10" },
-          "$10"
-        ),
-        React.createElement(
-          "option",
-          { value: "20" },
-          "$20"
-        ),
-        React.createElement(
-          "option",
-          { value: "50" },
-          "$50"
-        ),
-        React.createElement(
-          "option",
-          { value: "100" },
-          "$100"
-        )
-      ),
-      React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
-      React.createElement("input", { className: "makeDomoSubmit", type: "submit", value: "Update Domo" })
-    )
+    React.createElement("input", { id: "domoLevel", type: "text", name: "level", placeholder: "Domo Level" }),
+    React.createElement("input", { type: "hidden", name: "_csrf", value: props.csrf }),
+    React.createElement("input", { className: "makeDomoSubmit", type: "submit", value: "Make Domo" })
   );
 };
 
@@ -200,19 +143,22 @@ var DomoList = function DomoList(props) {
         "h3",
         { className: "domoName" },
         " Name: ",
-        domo.name
+        domo.name,
+        " "
       ),
       React.createElement(
         "h3",
         { className: "domoAge" },
         " Age: ",
-        domo.age
+        domo.age,
+        " "
       ),
       React.createElement(
         "h3",
-        { className: "domoCredit" },
-        " Credit: $",
-        domo.credit
+        { className: "domoLevel" },
+        " Level: ",
+        domo.level,
+        " "
       )
     );
   });
@@ -231,11 +177,22 @@ var loadDomosFromServer = function loadDomosFromServer() {
 };
 
 var setup = function setup(csrf) {
-  ReactDOM.render(React.createElement(DomoForm, { csrf: csrf }), document.querySelector("#makeDomo"));
+  var passwordButton = document.querySelector("#passwordButton");
+  var domoButton = document.querySelector("#maker");
 
-  ReactDOM.render(React.createElement(DomoList, { domos: [] }), document.querySelector("#domos"));
+  passwordButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    createPasswordWindow(csrf);
+    return false;
+  });
 
-  loadDomosFromServer();
+  domoButton.addEventListener("click", function (e) {
+    e.preventDefault();
+    createDomoWindow(csrf);
+    return false;
+  });
+
+  createDomoWindow(csrf); //default view
 };
 
 var getToken = function getToken() {
@@ -250,26 +207,26 @@ $(document).ready(function () {
 "use strict";
 
 var handleError = function handleError(message) {
-  $("#errorMessage").text(message);
-  $("#domoMessage").animate({ width: 'toggle' }, 350);
+		$("#errorMessage").text(message);
+		$("#domoMessage").animate({ width: 'toggle' }, 350);
 };
 
 var redirect = function redirect(response) {
-  $("#domoMessage").animate({ width: 'hide' }, 350);
-  window.location = response.redirect;
+		$("#domoMessage").animate({ width: 'hide' }, 350);
+		window.location = response.redirect;
 };
 
 var sendAjax = function sendAjax(type, action, data, success) {
-  $.ajax({
-    cache: false,
-    type: type,
-    url: action,
-    data: data,
-    dataType: "json",
-    success: success,
-    error: function error(xhr, status, _error) {
-      var messageObj = JSON.parse(xhr.responseText);
-      handleError(messageObj.error);
-    }
-  });
+		$.ajax({
+				cashe: false,
+				type: type,
+				url: action,
+				data: data,
+				dataType: "json",
+				success: success,
+				error: function error(xhr, status, _error) {
+						var messageObj = JSON.parse(xhr.responseText);
+						handleError(messageObj.error);
+				}
+		});
 };

@@ -55,6 +55,14 @@ AccountSchema.statics.findByUsername = (name, callback) => {
   return AccountModel.findOne(search, callback);
 };
 
+AccountSchema.statics.removeByUsername = (name, callback) => {
+  const search = {
+    username: name,
+  };
+
+  return AccountModel.deleteOne(search, callback);
+};
+
 AccountSchema.statics.generateHash = (password, callback) => {
   const salt = crypto.randomBytes(saltLength);
 
@@ -81,6 +89,7 @@ AccountModel.findByUsername(username, (err, doc) => {
     return callback();
   });
 });
+
 
 AccountModel = mongoose.model('Account', AccountSchema);
 
