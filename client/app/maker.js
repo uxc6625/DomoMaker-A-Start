@@ -25,11 +25,11 @@ const handleDomoUpdate = (e) => {
     return false;
   }
   handleError("RAWR! Not working yet...");
-  /*
+  
   sendAjax('POST', $("#domoUpdateForm").attr("action"), $("#domoUpdateForm").serialize(), function() {
     loadDomosFromServer();
   });
-  */
+  
   return false;
 };
 
