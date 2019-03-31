@@ -50,8 +50,9 @@ nav:nth-child(1) {
 .domoForm {
     border: 2px solid #338acc;
     height: 35px;
-    width: 700px;
+    width: 50%;
     margin-top:0px;
+    margin-bottom: 30px;
     padding-top:10px;
     background-color: #55acee;
     border-bottom-right-radius: 4px;
@@ -60,8 +61,8 @@ nav:nth-child(1) {
 
 .domoForm label {
     display: inline-block;
-    width: 75px;
-    margin-left: 10px;
+    width: 60px;
+    margin-left: 0px;
     font-size: 1.2em;
     float: left;
     color: white;
@@ -69,12 +70,20 @@ nav:nth-child(1) {
 
 .domoForm input[type=text] {
     float:left;
+    margin-right: 30px;
+    
 }
+.domoForm select {
+    float:left;
+    margin-right: 30px;
+}
+
+
 
 .makeDomoSubmit {
     transition: background-color 0.4s ease;
     display: inline;
-    width: 90px;
+    width: 100px;
     background-color: #55acee;
     border-radius: 2px;
     color: white;
@@ -190,7 +199,7 @@ nav:nth-child(1) {
 }
 
 #domos {
-    width: 40%;
+    width: 50%;
     min-width: 400px;
     border: 2px solid #55acee;
     border-radius: 4px;
@@ -245,12 +254,21 @@ h3.domoName {
 }
 
 h3.domoAge {
-    float:right;
+    float:left;
     text-align: left;
-    width: 100px;
+    width: 200px;
     font-weight: bold;
-    padding-right: 40px;
+    
     font-size: 1.5em;
+}
+
+h3.domoCredit{
+  float:left;
+  text-align: left;
+  width: 200px;
+  font-weight: bold;
+  
+  font-size: 1.5em;
 }
 
 .domo:first-child {

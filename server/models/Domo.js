@@ -4,8 +4,6 @@ const _ = require('underscore');
 
 let DomoModel = {};
 
-// mongoose.Types.ObjectID is a function that
-// converts string ID to real mongo ID
 const convertId = mongoose.Types.ObjectId;
 const setName = (name) => _.escape(name).trim();
 
@@ -15,21 +13,24 @@ const DomoSchema = new mongoose.Schema({
     required: true,
     trim: true,
     set: setName,
+    unique: true,
   },
-
   age: {
     type: Number,
     min: 0,
     required: true,
   },
-
+  credit: {
+    type: Number,
+    min: 0,
+    required: true,
+  },
   owner: {
     type: mongoose.Schema.ObjectId,
     required: true,
-    ref: 'Account',
+    red: 'Account',
   },
-
-  createdData: {
+  createdDate: {
     type: Date,
     default: Date.now,
   },
@@ -38,15 +39,33 @@ const DomoSchema = new mongoose.Schema({
 DomoSchema.statics.toAPI = (doc) => ({
   name: doc.name,
   age: doc.age,
+  credit: doc.credit,
 });
 
 DomoSchema.statics.findByOwner = (ownerId, callback) => {
   const search = {
     owner: convertId(ownerId),
   };
-
-  return DomoModel.find(search).select('name age').exec(callback);
+  return DomoModel.find(search).select('name age credit').exec(callback);
 };
+
+/*
+DomoSchema.statics.findOneByOwner = (ownerId, callback) => {
+  const search = {
+    owner: convertId(ownerId),
+  };
+  return DomoModel.findOne(search).select('name age credit').exec(callback);
+};
+
+
+DomoSchema.statics.updateDomo = (ownerId, callback) => {
+  const search = {
+    owner: convertId(ownerId),
+  };
+  //return DomoModel.find(search).select('name age credit').exec(callback);
+  DomoModel.findByIdAndUpdate(search, {age})
+};
+*/
 
 DomoModel = mongoose.model('Domo', DomoSchema);
 

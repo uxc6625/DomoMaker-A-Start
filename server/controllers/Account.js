@@ -15,11 +15,11 @@ const login = (request, response) => {
   const req = request;
   const res = response;
 
-	// force cast to strings to cover some security flaws
+  // cast to strings
   const username = `${req.body.username}`;
   const password = `${req.body.pass}`;
 
-  if (!username || !password) {
+  if (!username || ! password) {
     return res.status(400).json({ error: 'RAWR! All fields are required' });
   }
 
@@ -38,7 +38,7 @@ const signup = (request, response) => {
   const req = request;
   const res = response;
 
-	// cast to strings to cover up some security flaws
+  // cast to strings
   req.body.username = `${req.body.username}`;
   req.body.pass = `${req.body.pass}`;
   req.body.pass2 = `${req.body.pass2}`;
@@ -46,8 +46,9 @@ const signup = (request, response) => {
   if (!req.body.username || !req.body.pass || !req.body.pass2) {
     return res.status(400).json({ error: 'RAWR! All fields are required' });
   }
+
   if (req.body.pass !== req.body.pass2) {
-    return res.status(400).json({ error: 'RAWR! Passwords do not match' });
+    return res.status(400).json({ error: 'RAWR! Passwords do no match' });
   }
 
   return Account.AccountModel.generateHash(req.body.pass, (salt, hash) => {
@@ -63,7 +64,7 @@ const signup = (request, response) => {
 
     savePromise.then(() => {
       req.session.account = Account.AccountModel.toAPI(newAccount);
-      res.json({ redirect: '/maker' });
+      return res.json({ redirect: '/maker' });
     });
 
     savePromise.catch((err) => {

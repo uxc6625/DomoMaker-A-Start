@@ -82,7 +82,6 @@ AccountModel.findByUsername(username, (err, doc) => {
   });
 });
 
-
 AccountModel = mongoose.model('Account', AccountSchema);
 
 module.exports.AccountModel = AccountModel;
